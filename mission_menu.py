@@ -9,14 +9,13 @@ class MissionSelect(MenuBase):
     def __init__(self):
         MenuBase.__init__(self)
 
-        self.title = self.makeTitle(text = "Select Mission")
+        self.title = self.makeTitle(text = "Selecionar Missão", pos = (0, 0.42), scale = 0.11)
         self.title.reparentTo(self.frame)
 
-        self.m1 = self.makeButton(text = "1", pos = (-0.5, -0.1), event = "missionselect-m1", hasPadding = False)
-        self.m2 = self.makeButton(text = "2", pos = (-0.35, -0.1), event = "missionselect-m2", hasPadding = False)
-        self.m3 = self.makeButton(text = "test", pos = (-0.2, -0.1), event = "missionselect-test", hasPadding = False)
+        self.m1 = self.makeButton(text = "Rota de Contrabando",  pos = (0, 0.08),  event = "missionselect-m1", scale = 0.04)
+        self.m2 = self.makeButton(text = "Infiltração Nômade",   pos = (0, -0.16), event = "missionselect-m2", scale = 0.04)
 
-        for btn in [self.m1, self.m2, self.m3]:
+        for btn in [self.m1, self.m2]:
             btn.reparentTo(self.frame)
 
 

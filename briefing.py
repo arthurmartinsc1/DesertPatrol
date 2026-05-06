@@ -10,10 +10,11 @@ class MissionScreen(MenuBase):
     def __init__(self):
         MenuBase.__init__(self)
 
-        self.title = self.makeTitle(text = "Mission Placeholder")
+        self.title = self.makeTitle(text = "Missão", pos = (0, 0.22), scale = 0.07)
+        self.title["text_fg"] = (0.86, 0.9, 0.92, 1)
         self.title.reparentTo(self.frame)
 
-        self.startBtn = self.makeButton(text = "Start", pos = (0, -0.7), event = "mission-start")
+        self.startBtn = self.makeButton(text = "Iniciar", pos = (0, -0.62), event = "mission-start")
         self.startBtn.reparentTo(self.frame)
 
         self.hide()

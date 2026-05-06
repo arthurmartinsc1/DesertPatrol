@@ -18,32 +18,47 @@ class Hud:
         self.frame.setTransparency(0)
 
         self.title = DirectLabel(
-            scale = 0.05,
-            pos = (0, 0, 0.9),
-            text = "Current Mission Placeholder",
-            text_fg = (0.2, 0.2, 0.1, 1),
-            frameColor = (0.1, 0.8, 0.8, 0),
+            scale = 0.045,
+            pos = (0, 0, 0.86),
+            text = "Missão Atual",
+            text_fg = (0.96, 0.92, 0.78, 1),
+            text_shadow = (0, 0, 0, 1),
+            frameColor = (0.01, 0.012, 0.016, 0.58),
+            pad = (0.03, 0.02),
             enableEdit = False,
             )
 
-        self.createBtn("Quit", 0.8, ["game-quit"])
-        self.createBtn("Found It", 0.7, ["game-finished"])
+        self.createBtn("Sair", 0.78, ["game-crashed"])
+        self.createBtn("Encontrei!", 0.61, ["game-finished"])
         self.title.reparentTo(self.frame)
 
-        self.timer = OnscreenText(text = "", mayChange = True, pos = (0.8, 0.9))
+        self.timer = OnscreenText(
+            text = "",
+            mayChange = True,
+            pos = (0.76, 0.9),
+            fg = (0.96, 0.92, 0.78, 1),
+            shadow = (0, 0, 0, 1),
+            scale = 0.045)
+        self.timer.reparentTo(self.frame)
 
         self.hide()
 
     def createBtn(self, text, verticalPos, commands):
         btn = DirectButton(
             text = text,
-            text_fg = (0.2,0.2,0.4,1),
-            text_scale = 0.03,
+            text_fg = (1, 0.96, 0.86, 1),
+            text_scale = 0.026,
             text_pos = (0, 0),
-            scale = 3,
+            scale = 2.35,
             pos = (-0.9, 0, verticalPos),
-            relief = 1,
-            frameColor = (0,1,0,0.5),
+            relief = DGG.FLAT,
+            frameColor = (
+                (0.82, 0.2, 0.08, 0.86),
+                (1.0, 0.34, 0.12, 0.95),
+                (0.55, 0.08, 0.04, 0.9),
+                (0.16, 0.16, 0.18, 0.75),
+            ),
+            pad = (0.055, 0.009),
             command = base.messenger.send,
             extraArgs = commands,
             rolloverSound = None,
@@ -57,7 +72,7 @@ class Hud:
         self.frame.hide()
 
     def hudTask(self, task):
-        self.timer.setText(str(self.missionLength - int(time.time() - self.startTime)) + " seconds left")
+        self.timer.setText(str(self.missionLength - int(time.time() - self.startTime)) + " segundos restantes")
         return task.cont
 
     def initialise(self, currentMission, missionLength):
