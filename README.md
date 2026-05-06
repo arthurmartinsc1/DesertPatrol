@@ -22,9 +22,19 @@ contrabando, contar aeronaves inimigas e reportar ao comando.
 
 ---
 
-## Como rodar
+## Instalação e execução
 
-### Opção 1 — com `uv` (recomendado)
+### macOS / Linux
+
+#### Opção 1 — com `uv` (recomendado)
+
+Instale o `uv` (caso ainda não tenha):
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Rode o jogo:
 
 ```bash
 uv run --with-requirements requirements.txt python main.py
@@ -36,15 +46,61 @@ Ou passando as dependências diretamente:
 uv run --with panda3d --with panda3d-simplepbr --with panda3d-gltf python main.py
 ```
 
-### Opção 2 — com `pip` + venv
+#### Opção 2 — com `pip` + venv
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate          # Linux / macOS
-# .venv\Scripts\activate           # Windows
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python main.py
 ```
+
+---
+
+### Windows
+
+#### Opção 1 — com `uv` (recomendado)
+
+Instale o `uv` no PowerShell (caso ainda não tenha):
+
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Rode o jogo:
+
+```powershell
+uv run --with-requirements requirements.txt python main.py
+```
+
+Ou passando as dependências diretamente:
+
+```powershell
+uv run --with panda3d --with panda3d-simplepbr --with panda3d-gltf python main.py
+```
+
+#### Opção 2 — com `pip` + venv
+
+No **PowerShell**:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python main.py
+```
+
+No **CMD** (prompt de comando):
+
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+pip install -r requirements.txt
+python main.py
+```
+
+> **Dica:** se o PowerShell bloquear o script de ativação, libere com:
+> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
 
 ---
 
@@ -92,11 +148,25 @@ vfx/                 # Efeitos de partícula (.ptf)
 
 ---
 
-## Notas
+## Solução de problemas
 
-- Se o jogo travar com erro de `simplepbr` ou `gltf`, instale as
-  dependências do `requirements.txt`.
-- O motor de partículas do Panda3D precisa estar habilitado (já é feito
-  automaticamente no `GameBase`).
-- Para desativar o PBR e rodar em hardware mais limitado, edite
-  `engine.py` e troque `simplepbr.init()` por `render.setShaderAuto()`.
+### macOS
+
+- Se aparecer aviso de "developer não verificado" ao instalar dependências,
+  rode `xcode-select --install` para instalar as ferramentas de linha de comando.
+- Em Macs com chip Apple Silicon (M1/M2/M3), o Panda3D já tem suporte
+  nativo via `pip`/`uv`.
+
+### Windows
+
+- Se o `python` não for encontrado no PowerShell, instale via
+  [python.org](https://www.python.org/downloads/) marcando
+  **"Add Python to PATH"** durante a instalação.
+- Se o jogo abrir uma janela preta, atualize o driver da placa de vídeo.
+
+### Geral
+
+- Se travar com `ModuleNotFoundError: simplepbr`, instale o
+  `panda3d-simplepbr` (já listado no `requirements.txt`).
+- Para rodar em hardware mais limitado, edite `engine.py` e
+  troque `simplepbr.init()` por `render.setShaderAuto()`.
