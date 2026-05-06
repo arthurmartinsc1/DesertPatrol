@@ -161,6 +161,8 @@ class Game(GameBase, FSM):
         self.gameOver = GameOverScreen()
         self.hud = Hud()
         self.missionSelect = MissionSelect()
+        self.crashSound = loader.loadSfx("audio/Fahhh - QuickSounds.com.mp3")
+        self.crashSound.setVolume(1.0)
 
         base.camLens.setFov(90)
 
@@ -271,6 +273,7 @@ class Game(GameBase, FSM):
         self.debrief.initialise() #clear all settings on it, ie title and buttons, as they are mission specific
 
     def showGameOver(self, *args):
+        self.crashSound.play()
         self.request("GameOver")
 
     def enterGameOver(self):
