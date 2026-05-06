@@ -12,7 +12,7 @@ from briefing import MissionScreen
 from report import Debrief, GameOverScreen
 from cockpit_hud import Hud
 from mission_menu import MissionSelect
-from mission_loader import parseMissionFile, generate_random_models
+from mission_loader import parseMissionFile, generate_random_models, Model, ParticleSystem
 from settings import Settings
 
 import sys
@@ -76,6 +76,63 @@ def make_cocaine_packet():
     packet.setH(random.uniform(-18, 18))
     packet.setScale(0.75)
     return packet
+
+
+def make_helicopter():
+    from panda3d.core import (GeomNode, Geom, GeomVertexData, GeomVertexFormat,
+                               GeomVertexWriter, GeomTriangles, NodePath)
+
+    def make_box(name, size, color, pos=(0, 0, 0)):
+        sx, sy, sz = size
+        hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0
+        fmt = GeomVertexFormat.getV3n3c4()
+        vdata = GeomVertexData(name, fmt, Geom.UHStatic)
+        vdata.setNumRows(24)
+        vertex = GeomVertexWriter(vdata, 'vertex')
+        normal = GeomVertexWriter(vdata, 'normal')
+        vertex_color = GeomVertexWriter(vdata, 'color')
+        faces = [
+            (( hx,  hy,  hz), (-hx,  hy,  hz), (-hx, -hy,  hz), ( hx, -hy,  hz), (0, 0, 1)),
+            (( hx,  hy, -hz), ( hx, -hy, -hz), (-hx, -hy, -hz), (-hx,  hy, -hz), (0, 0, -1)),
+            (( hx,  hy,  hz), ( hx,  hy, -hz), (-hx,  hy, -hz), (-hx,  hy,  hz), (0, 1, 0)),
+            (( hx, -hy,  hz), (-hx, -hy,  hz), (-hx, -hy, -hz), ( hx, -hy, -hz), (0, -1, 0)),
+            (( hx,  hy,  hz), ( hx, -hy,  hz), ( hx, -hy, -hz), ( hx,  hy, -hz), (1, 0, 0)),
+            ((-hx,  hy,  hz), (-hx,  hy, -hz), (-hx, -hy, -hz), (-hx, -hy,  hz), (-1, 0, 0)),
+        ]
+        tris = GeomTriangles(Geom.UHStatic)
+        for i, (v0, v1, v2, v3, n) in enumerate(faces):
+            base_i = i * 4
+            for v in (v0, v1, v2, v3):
+                vertex.addData3(*v)
+                normal.addData3(*n)
+                vertex_color.addData4(*color)
+            tris.addVertices(base_i, base_i + 1, base_i + 2)
+            tris.addVertices(base_i, base_i + 2, base_i + 3)
+
+        geom = Geom(vdata)
+        geom.addPrimitive(tris)
+        node = GeomNode(name)
+        node.addGeom(geom)
+        np = NodePath(node)
+        np.setPos(*pos)
+        np.setColor(*color)
+        np.setTwoSided(True)
+        return np
+
+    chopper = NodePath("helicopter")
+    body = make_box("heli_body", (1.6, 0.9, 0.8), (0.22, 0.28, 0.20, 1), (0, 0, 0.55))
+    tail = make_box("heli_tail", (0.35, 2.4, 0.25), (0.20, 0.26, 0.18, 1), (0, 1.5, 0.7))
+    fin = make_box("heli_fin", (0.08, 0.4, 0.55), (0.18, 0.22, 0.16, 1), (0, 2.55, 0.95))
+    skid_l = make_box("heli_skid_l", (0.06, 1.6, 0.06), (0.08, 0.08, 0.08, 1), (-0.55, 0.0, 0.06))
+    skid_r = make_box("heli_skid_r", (0.06, 1.6, 0.06), (0.08, 0.08, 0.08, 1), ( 0.55, 0.0, 0.06))
+    rotor = make_box("heli_rotor", (3.0, 0.10, 0.05), (0.10, 0.10, 0.10, 1), (0, 0, 1.05))
+    tail_rotor = make_box("heli_tail_rotor", (0.05, 0.06, 0.55), (0.10, 0.10, 0.10, 1), (0.18, 2.55, 0.95))
+
+    for part in (body, tail, fin, skid_l, skid_r, rotor, tail_rotor):
+        part.reparentTo(chopper)
+
+    chopper.setH(random.uniform(-180, 180))
+    return chopper
 
 
 class Mission:
@@ -324,19 +381,7 @@ class World:
         print(modelList)
         self.particlesList = []
         for model in modelList:
-            try:
-                if model.modelName == "cocaine-packet":
-                    m = make_cocaine_packet()
-                    m.reparentTo(self.terrain)
-                    m.setPos(*model.modelPos)
-                    continue
-                m = loader.loadModel("models/" + model.modelName)
-                m.reparentTo(self.terrain)
-                m.setPos(*model.modelPos)
-                if model.modelName == "helicopter":
-                    m.setScale(2)
-            except:
-                #Its a particle system
+            if isinstance(model, ParticleSystem):
                 floater = render.attachNewNode("particle floater")
                 floater.setPos(self.terrain, *model.particlePos)
                 floater.setScale(5)
@@ -344,6 +389,25 @@ class World:
                 fx.loadConfig(model.ptfFile)
                 fx.start(parent=floater, renderParent=floater)
                 self.particlesList.append((fx, floater))
+                continue
+
+            if model.modelName == "cocaine-packet":
+                m = make_cocaine_packet()
+                m.reparentTo(self.terrain)
+                m.setPos(*model.modelPos)
+                continue
+            if model.modelName == "helicopter":
+                m = make_helicopter()
+                m.reparentTo(self.terrain)
+                m.setPos(*model.modelPos)
+                m.setScale(0.6)
+                continue
+            m = loader.loadModel("models/" + model.modelName)
+            if m is None:
+                print("Aviso: modelo não encontrado: models/" + model.modelName)
+                continue
+            m.reparentTo(self.terrain)
+            m.setPos(*model.modelPos)
 
 
         #Once loaded, remove loading text
@@ -445,6 +509,7 @@ class Player:
             if not self.crashed and self.model.getZ(render) <= self.CRASH_Z:
                 self.crashed = True
                 base.messenger.send("game-crashed")
+                return task.done
             base.camera.setPos(self.model, 0, -9, 2)
             base.camera.lookAt(self.model)
         #print(self.speed)

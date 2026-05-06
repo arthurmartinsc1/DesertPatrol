@@ -35,7 +35,7 @@ if USE_RENDER_PIPELINE:
 
 else:
     models = {
-        "terrain":"models/terrain_non_render_pipeline.egg",
+        "terrain":"models/terrain.bam",
         "player":"models/supermarine_spitfire.glb",
         }
 

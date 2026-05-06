@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\ArthurWilmer\\\\OneDrive - HELMIP\\\\Área de Trabalho\\\\github\\\\DesertPatrol\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty Extension)",
+      "Bash(Sort-Object)",
+      "Bash(Get-Unique)",
+      "Bash(Find \"c:\\\\Users\\\\ArthurWilmer\\\\OneDrive - HELMIP\\\\Área de Trabalho\\\\github\\\\DesertPatrol\" -name \"*.mission\" -o -name \"*.egg\" -o -name \"*.bam\")"
+    ]
+  }
+}
