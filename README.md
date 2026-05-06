@@ -4,7 +4,7 @@ Jogo de reconhecimento aéreo no deserto, desenvolvido em Python com Panda3D.
 Você pilota um Supermarine Spitfire em missões de vigilância: identificar
 contrabando, contar aeronaves inimigas e reportar ao comando.
 
-**Autor:** Arthur Martins
+**Autor:** Arthur Martins, Arthur Wilmer, Vitor e Tassandro
 
 ---
 
