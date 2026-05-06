@@ -236,7 +236,7 @@ class Game(GameBase, FSM):
         self.startTime = "Not yet set - not loaded"  #set in self.missionOverTask
         self.player = Player(self.world)
         self.accept("player-into-Collision", self.showGameOver)
-        self.accept("game-quit", self.showGameOver)
+        self.accept("game-quit", self.request, ["Menu"])
         self.accept("game-finished", self.request, ["Debrief"])
         self.accept("game-crashed", self.showGameOver)
 

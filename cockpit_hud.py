@@ -28,7 +28,7 @@ class Hud:
             enableEdit = False,
             )
 
-        self.createBtn("Sair", 0.78, ["game-crashed"])
+        self.createBtn("Sair", 0.78, ["game-quit"])
         self.createBtn("Encontrei!", 0.61, ["game-finished"])
         self.title.reparentTo(self.frame)
 
